@@ -6,13 +6,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -30,6 +30,9 @@ public class DemoFrame extends JFrame {
 	private JButton button;
 	private JTextArea resultArea;
 	private JFileChooser chooser;
+	private JMenuBar bar;
+	private JMenu fileMenu;
+	private JMenuItem openItem, saveItem, closeItem;
 	private File[] files;
 	private ArrayList<Double> rssiArray;
 	private ArrayList<Double> lossRateArray;
@@ -41,29 +44,9 @@ public class DemoFrame extends JFrame {
 		//resultArea.setText("initial\n");
 		resultArea.setEditable(false);
 	    //createTextField();
-		//createButton();
+		createButton();
+		createMenu();
 		createPanel();
-		createFileChooser();
-		rssiArray = new ArrayList<Double>();
-		lossRateArray = new ArrayList<Double>();
-		try {
-			for (File file : files) {
-				parseInputFile(file, rssiArray, lossRateArray);
-			}
-		} catch (IOException exception) {
-			exception.printStackTrace();
-		}
-
-		double rssiMean = MathUtil.mean(rssiArray);
-		double rssiVar = MathUtil.variance(rssiArray);
-		double lossRateMean = MathUtil.mean(lossRateArray);
-		double lossRateVar = MathUtil.variance(lossRateArray);
-
-		resultArea.append("Rssi_Average  " + rssiMean + "\n");
-		resultArea.append("Rssi_Variance " + rssiVar + "\n");
-		resultArea.append("Packet Loss_Average " + lossRateMean + "\n");
-		resultArea.append("Packet Loss_Variance " + lossRateVar + "\n");
-
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
 	}
 	
@@ -123,11 +106,36 @@ public class DemoFrame extends JFrame {
 		outputField = new JTextField(FIELD_WIDTH);
 		outputField.setText("new\n");
 	}*/
-	/*
-	class addListener implements ActionListener {
+	
+	class openListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
+			createFileChooser();
 		}
-	}*/
+	}
+	
+	class comListener implements ActionListener {
+		public void actionPerformed(ActionEvent event) {
+				rssiArray = new ArrayList<Double>();
+				lossRateArray = new ArrayList<Double>();
+				try {
+					for (File file : files) {
+						parseInputFile(file, rssiArray, lossRateArray);
+					}
+				} catch (IOException exception) {
+					exception.printStackTrace();
+				}
+
+				double rssiMean = MathUtil.mean(rssiArray);
+				double rssiVar = MathUtil.variance(rssiArray);
+				double lossRateMean = MathUtil.mean(lossRateArray);
+				double lossRateVar = MathUtil.variance(lossRateArray);
+
+				resultArea.append("Rssi_Average  " + rssiMean + "\n");
+				resultArea.append("Rssi_Variance " + rssiVar + "\n");
+				resultArea.append("Packet Loss_Average " + lossRateMean + "\n");
+				resultArea.append("Packet Loss_Variance " + lossRateVar + "\n");
+		}
+	}
 	
 	/**
 	 * construct a FileChooser Frame to choose input files
@@ -140,12 +148,11 @@ public class DemoFrame extends JFrame {
 		files = chooser.getSelectedFiles();
 	}
 	
-	/*private void createButton() {
-		button = new JButton("compute");
-		
-		ActionListener listener = new addListener();
-		button.addActionListener(listener);
-	}*/
+	private void createButton() {
+		button = new JButton("Compute");
+		ActionListener blistener = new comListener();
+		button.addActionListener(blistener);
+	}
 	
 	/**
 	 * create a Panel hold the txtarea
@@ -154,9 +161,27 @@ public class DemoFrame extends JFrame {
 		JPanel panel = new JPanel();
 		//panel.add(input);
 		//panel.add(outputField);
-		//panel.add(button);
+		panel.add(button);
 		JScrollPane scrollPane = new JScrollPane(resultArea);
 		panel.add(scrollPane);
 		add(panel);
+	}
+	
+	/**
+	 * create a menu
+	 */
+	private void createMenu() {
+		bar = new JMenuBar();
+		fileMenu = new JMenu("Files");
+		openItem = new JMenuItem("open");
+		//saveItem = new JMenuItem("save");
+		//closeItem = new JMenuItem("close");
+		fileMenu.add(openItem);
+		//fileMenu.add(saveItem);
+		//fileMenu.add(closeItem);
+		bar.add(fileMenu);
+		setJMenuBar(bar);
+		ActionListener listener = new openListener();
+		openItem.addActionListener(listener);
 	}
 }
