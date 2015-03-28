@@ -1,9 +1,8 @@
 import javax.swing.JFrame;
 /**
- * 
+ * A program dedicated to calculate the variance and mean  
+ * of collected data
  * @author Ted
- * @param
- * @return
  */
 public class DataProcess {
 	public static void main(String[] args) {
@@ -11,5 +10,4 @@ public class DataProcess {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
-
 }
