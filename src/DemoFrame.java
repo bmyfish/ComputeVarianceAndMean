@@ -2,7 +2,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -21,18 +20,24 @@ import java.util.ArrayList;
  * @author Ted
  */
 public class DemoFrame extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7063193797495071710L;
 	private static final int FRAME_WIDTH = 400;
 	private static final int FRAME_HEIGHT = 250;	
 	private static final int AREA_ROWS = 10;
 	private static final int AREA_COLUMNS = 30;
 	//private JLabel input;
 	//private JTextField outputField;
-	private JButton button;
+	private JButton computeButton;
+	//private JButton drawButton;
+
 	private JTextArea resultArea;
 	private JFileChooser chooser;
 	private JMenuBar bar;
 	private JMenu fileMenu;
-	private JMenuItem openItem, saveItem, closeItem;
+	private JMenuItem openItem;
 	private File[] files;
 	private ArrayList<Double> rssiArray;
 	private ArrayList<Double> lossRateArray;
@@ -44,7 +49,8 @@ public class DemoFrame extends JFrame {
 		//resultArea.setText("initial\n");
 		resultArea.setEditable(false);
 	    //createTextField();
-		createButton();
+		createComputeButton();
+		//createDrawButton();
 		createMenu();
 		createPanel();
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -107,14 +113,25 @@ public class DemoFrame extends JFrame {
 		outputField.setText("new\n");
 	}*/
 	
-	class openListener implements ActionListener {
-		public void actionPerformed(ActionEvent event) {
-			createFileChooser();
-		}
+	/**
+	 * construct a FileChooser Frame to choose input files
+	 */
+	private void createFileChooser() {
+		chooser = new JFileChooser();
+		chooser.setMultiSelectionEnabled(true);
+		JFrame frame = new JFrame();
+		chooser.showOpenDialog(frame);
+		files = chooser.getSelectedFiles();
 	}
 	
-	class comListener implements ActionListener {
-		public void actionPerformed(ActionEvent event) {
+	/**
+	 * create compute button
+	 * calculate and display the variance and mean value of input files when click button
+	 */
+	private void createComputeButton() {
+		computeButton = new JButton("Compute");
+		computeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
 				rssiArray = new ArrayList<Double>();
 				lossRateArray = new ArrayList<Double>();
 				try {
@@ -130,29 +147,22 @@ public class DemoFrame extends JFrame {
 				double lossRateMean = MathUtil.mean(lossRateArray);
 				double lossRateVar = MathUtil.variance(lossRateArray);
 
+				resultArea.setText("");
 				resultArea.append("Rssi_Average  " + rssiMean + "\n");
 				resultArea.append("Rssi_Variance " + rssiVar + "\n");
 				resultArea.append("Packet Loss_Average " + lossRateMean + "\n");
 				resultArea.append("Packet Loss_Variance " + lossRateVar + "\n");
-		}
+				}
+			});
 	}
 	
 	/**
-	 * construct a FileChooser Frame to choose input files
-	 */
-	private void createFileChooser() {
-		chooser = new JFileChooser();
-		chooser.setMultiSelectionEnabled(true);
-		JFrame frame = new JFrame();
-		chooser.showOpenDialog(frame);
-		files = chooser.getSelectedFiles();
-	}
-	
-	private void createButton() {
-		button = new JButton("Compute");
-		ActionListener blistener = new comListener();
-		button.addActionListener(blistener);
-	}
+	 * create draw button
+	 * draw the graphic when click the button
+	 
+	private void createDrawButton() {
+		drawButton = new JButton("Draw");
+	}*/
 	
 	/**
 	 * create a Panel hold the txtarea
@@ -161,7 +171,8 @@ public class DemoFrame extends JFrame {
 		JPanel panel = new JPanel();
 		//panel.add(input);
 		//panel.add(outputField);
-		panel.add(button);
+		panel.add(computeButton);
+		//panel.add(drawButton);
 		JScrollPane scrollPane = new JScrollPane(resultArea);
 		panel.add(scrollPane);
 		add(panel);
@@ -169,6 +180,7 @@ public class DemoFrame extends JFrame {
 	
 	/**
 	 * create a menu
+	 * open file chooser frame when click open
 	 */
 	private void createMenu() {
 		bar = new JMenuBar();
@@ -181,7 +193,11 @@ public class DemoFrame extends JFrame {
 		//fileMenu.add(closeItem);
 		bar.add(fileMenu);
 		setJMenuBar(bar);
-		ActionListener listener = new openListener();
-		openItem.addActionListener(listener);
+		openItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				createFileChooser();
+				resultArea.setText("");
+			}
+		});
 	}
 }
