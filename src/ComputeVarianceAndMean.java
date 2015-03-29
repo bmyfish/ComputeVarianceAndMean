@@ -4,7 +4,7 @@ import javax.swing.JFrame;
  * of collected data
  * @author Ted
  */
-public class DataProcess {
+public class ComputeVarianceAndMean {
 	public static void main(String[] args) {
 		JFrame frame = new DemoFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

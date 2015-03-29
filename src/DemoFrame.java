@@ -148,10 +148,10 @@ public class DemoFrame extends JFrame {
 				double lossRateVar = MathUtil.variance(lossRateArray);
 
 				resultArea.setText("");
-				resultArea.append("Rssi_Average  " + rssiMean + "\n");
-				resultArea.append("Rssi_Variance " + rssiVar + "\n");
-				resultArea.append("Packet Loss_Average " + lossRateMean + "\n");
-				resultArea.append("Packet Loss_Variance " + lossRateVar + "\n");
+				resultArea.append("Rssi_Average: " + rssiMean + "\n");
+				resultArea.append("Rssi_Variance: " + rssiVar + "\n");
+				resultArea.append("Packet Loss_Average: " + lossRateMean + "\n");
+				resultArea.append("Packet Loss_Variance: " + lossRateVar + "\n");
 				}
 			});
 	}
